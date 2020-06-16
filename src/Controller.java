@@ -26,16 +26,41 @@ public class Controller {
     public void initController() {
         view.getConfirmButton().addActionListener(e -> getOutput());
         view.getClearButton().addActionListener(e -> clear());
+        view.getResetMenuitem().addActionListener(e -> clear());
     }
 
     private void clear() {
         view.getAmountOutput().setText(null);
         view.getAmountInput().setText(null);
+        view.getInformLabel().setText(" ");
+    }
+
+    public void clearOutput(){
+        view.getAmountOutput().setText(null);
     }
 
     private void getOutput() {
-            view.getAmountOutput().setText((String.valueOf(Float.valueOf(view.getAmountInput().getText())/model.getCurrencyValue().get(view.getCurrencyComboBox().getSelectedIndex()))));
-            System.out.println(Float.valueOf(view.getAmountInput().getText())/model.getCurrencyValue().get(view.getCurrencyComboBox().getSelectedIndex()));
+        clearOutput();
+            if (verifyInput()) {
+                view.getAmountOutput().setText((String.valueOf(Float.valueOf(view.getAmountInput().getText()) / model.getCurrencyValue().get(view.getCurrencyComboBox().getSelectedIndex()))));
+                System.out.println(Float.valueOf(view.getAmountInput().getText()) / model.getCurrencyValue().get(view.getCurrencyComboBox().getSelectedIndex()));
+            }
+    }
+
+    private boolean verifyInput() {
+        if (view.getAmountInput().getText().length() > 0) {
+            try {
+                Float.parseFloat(view.getAmountInput().getText());
+                if (Float.parseFloat(view.getAmountInput().getText()) < 0) {
+                    view.getInformLabel().setText("Use number higher than 0");
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                view.getInformLabel().setText("Try correct input");
+                return false;
+            }
+        }
+        return true;
     }
 
     // Gets values of currencies from NBP webpage
